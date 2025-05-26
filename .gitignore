@@ -24,6 +24,8 @@ supabase/.temp/
 
 # IDE
 .vscode/
+!.vscode/tasks.json
+!.vscode/keybindings.json
 .idea/
 *.swp
 *.swo
