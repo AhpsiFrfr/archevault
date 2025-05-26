@@ -85,6 +85,7 @@ export default function EonIDProfileSetup() {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [showHoldings, setShowHoldings] = useState(true);
 
   // Load existing profile data
   useEffect(() => {
@@ -847,9 +848,9 @@ export default function EonIDProfileSetup() {
                 <h2 className="text-2xl font-bold text-blue-300">EON-ID Preview</h2>
               </div>
               
-              {/* Enhanced EON-ID Preview with New Layout */}
+                            {/* Enhanced EON-ID Preview with Compact Layout */}
               <div className="rounded-xl border border-neutral-700 bg-[#0b0c1a] text-white p-4 shadow-xl">
-                <div className="flex items-start gap-6">
+                <div className="flex items-start gap-4">
                   {/* Avatar & Domain */}
                   <div className="flex flex-col items-center">
                     <div className="relative">
@@ -869,112 +870,144 @@ export default function EonIDProfileSetup() {
                   </div>
 
                   {/* Identity Info */}
-                  <div className="flex-1">
-                    <h1 className="text-2xl font-bold leading-tight">{username || 'Your Display Name'}</h1>
-                    <h2 className="text-lg text-gray-400 -mt-1">{title || 'Builder'}</h2>
-
-                    {/* Badges */}
-                    {selectedBadges && selectedBadges.length > 0 && (
-                      <div className="mt-2 flex items-center gap-2">
-                        {selectedBadges.map((badge, index) => (
-                          <div key={index} className="relative">
-                            <img
-                              src={`/badges/${badge}`}
-                              alt={badge}
-                              className="w-8 h-8 rounded border border-white/20"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                              }}
-                            />
-                          </div>
-                        ))}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h1 className="text-2xl font-bold leading-tight">{username || 'Your Display Name'}</h1>
+                        <h2 className="text-lg text-gray-400 -mt-1">{title || 'Builder'}</h2>
                       </div>
-                    )}
+                      
+                      {/* Compact Badges & Holdings Toggle */}
+                      <div className="flex flex-col items-end gap-2">
+                        {/* Badges Row */}
+                        {selectedBadges && selectedBadges.length > 0 && (
+                          <div className="flex items-center gap-1">
+                            {selectedBadges.slice(0, 4).map((badge, index) => (
+                              <div key={index} className="relative">
+                                <img
+                                  src={`/badges/${badge}`}
+                                  alt={badge}
+                                  className="w-6 h-6 rounded border border-white/20"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                  }}
+                                />
+                              </div>
+                            ))}
+                            {selectedBadges.length > 4 && (
+                              <div className="w-6 h-6 rounded bg-gray-700/50 border border-white/20 flex items-center justify-center text-xs text-gray-300">
+                                +{selectedBadges.length - 4}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        
+                        {/* Show Holdings Toggle */}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowHoldings(!showHoldings)}
+                          className="text-xs h-6 px-2 bg-gray-800/50 hover:bg-violet-600/20"
+                        >
+                          {showHoldings ? '👁️ Hide' : '💰 Show'} Holdings
+                        </Button>
+                      </div>
+                    </div>
 
                     {/* XP Progress */}
-                    <div className="mt-4">
-                      <p className="text-xs uppercase tracking-wide mb-1 text-gray-400">XP Progress</p>
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs uppercase tracking-wide text-gray-400">XP Progress</p>
+                        <p className="text-xs text-gray-300">
+                          {xpLevel} / 1000 XP ({((xpLevel / 1000) * 100).toFixed(1)}%)
+                        </p>
+                      </div>
                       <div className="w-full bg-neutral-800 h-2 rounded-full overflow-hidden">
                         <div
                           className="bg-gradient-to-r from-violet-500 to-blue-500 h-2 rounded-full transition-all duration-300"
                           style={{ width: `${Math.min((xpLevel / 1000) * 100, 100)}%` }}
                         ></div>
                       </div>
-                      <p className="text-xs mt-1 text-gray-300">
-                        {xpLevel} / 1000 XP ({((xpLevel / 1000) * 100).toFixed(1)}%)
-                      </p>
                     </div>
 
-                    {/* Bio Preview */}
-                    {bio && (
-                      <div className="mt-3">
-                        <p className="text-sm text-gray-300">{bio}</p>
-                      </div>
-                    )}
+                    {/* Bio & Social Links Row */}
+                    <div className="flex items-start gap-4">
+                      {/* Bio Preview */}
+                      {bio && (
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-300 line-clamp-2">{bio}</p>
+                        </div>
+                      )}
 
-                    {/* Social Links Preview */}
-                    {socialLinks.length > 0 && (
-                      <div className="mt-3">
-                        <p className="text-xs text-gray-400 mb-2">Social Links</p>
-                        <div className="flex flex-wrap gap-2">
-                          {socialLinks.map((link, idx) => (
-                            <div key={idx} className="flex items-center gap-1 bg-black/20 rounded-full px-2 py-1">
-                              <span className="w-3 h-3">{link.icon}</span>
-                              <span className="text-xs text-gray-300">@{link.username}</span>
+                      {/* Social Links Preview */}
+                      {socialLinks.length > 0 && (
+                        <div className="flex items-center gap-1">
+                          {socialLinks.slice(0, 3).map((link, idx) => (
+                            <div key={idx} className="w-5 h-5 text-gray-400 hover:text-white transition-colors">
+                              {link.icon}
                             </div>
                           ))}
+                          {socialLinks.length > 3 && (
+                            <div className="text-xs text-gray-400">+{socialLinks.length - 3}</div>
+                          )}
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
 
-                  {/* Holdings */}
-                  <div className="w-64 bg-black/30 p-3 rounded-xl text-sm border border-neutral-700">
-                    <div className="flex justify-between mb-1">
-                      <span className="text-gray-400">Total Holdings</span>
-                      <span className="text-yellow-400 font-bold">42,000 EONIC</span>
+                  {/* Holdings Panel */}
+                  {showHoldings && (
+                    <div className="w-56 bg-black/30 p-3 rounded-xl text-sm border border-neutral-700 transition-all duration-300">
+                      <div className="flex justify-between mb-1">
+                        <span className="text-gray-400">Total Holdings</span>
+                        <span className="text-yellow-400 font-bold">42,000 EONIC</span>
+                      </div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-gray-400">Staked</span>
+                        <span className="text-cyan-400">18,500</span>
+                      </div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-gray-400">Locked</span>
+                        <span className="text-green-400">800,500</span>
+                      </div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-gray-400">Platform Total</span>
+                        <span className="text-pink-400">54,298.75</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Portfolio Value</span>
+                        <span className="text-emerald-400">
+                          $54,298.75 (+8.7%)
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-gray-400">Staked</span>
-                      <span className="text-cyan-400">18,500</span>
-                    </div>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-gray-400">Locked</span>
-                      <span className="text-green-400">800,500</span>
-                    </div>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-gray-400">Platform Total</span>
-                      <span className="text-pink-400">54,298.75</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Portfolio Value</span>
-                      <span className="text-emerald-400">
-                        $54,298.75 (+8.7%)
-                      </span>
-                    </div>
-                  </div>
+                  )}
                 </div>
 
-                                 {/* Referral Link */}
-                 <div className="mt-4 text-right">
-                   <Button 
-                     variant="outline" 
-                     onClick={async () => {
-                       try {
-                         const referralUrl = `https://archevault.com/ref/${username.toLowerCase() || 'username'}`;
-                         await navigator.clipboard.writeText(referralUrl);
-                         setCopySuccess(true);
-                         setTimeout(() => setCopySuccess(false), 2000);
-                       } catch (err) {
-                         console.error('Failed to copy referral link:', err);
-                       }
-                     }}
-                     className="transition-all duration-200 hover:bg-violet-600/20 hover:border-violet-500"
-                   >
-                     {copySuccess ? '✅ Copied!' : 'Copy Referral Link'}
-                   </Button>
-                 </div>
+                {/* Bottom Actions Row */}
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-700/50">
+                  <div className="text-xs text-gray-400">
+                    Preview updates in real-time
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        const referralUrl = `https://archevault.com/ref/${username.toLowerCase() || 'username'}`;
+                        await navigator.clipboard.writeText(referralUrl);
+                        setCopySuccess(true);
+                        setTimeout(() => setCopySuccess(false), 2000);
+                      } catch (err) {
+                        console.error('Failed to copy referral link:', err);
+                      }
+                    }}
+                    className="transition-all duration-200 hover:bg-violet-600/20 hover:border-violet-500"
+                  >
+                    {copySuccess ? '✅ Copied!' : '🔗 Copy Referral'}
+                  </Button>
+                </div>
               </div>
             </div>
 
