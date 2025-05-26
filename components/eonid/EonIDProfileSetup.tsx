@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
@@ -8,7 +8,7 @@ import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 
 const defaultTitles = [
   'Builder',
-  'Founder', 
+  'Founder',
   'King of the Rats',
   'Oracle',
   'Visionary',
@@ -17,13 +17,16 @@ const defaultTitles = [
   'Sage'
 ];
 
-const vaultThemes = [
-  'Cosmic Dark',
-  'Neon Cyber',
-  'Ethereal Blue',
-  'Mystic Purple',
-  'Solar Gold'
-];
+const eonThemes = {
+  'Nebula Blue': 'bg-gradient-to-br from-[#001f3f] to-[#0074D9] ring-blue-400',
+  'Solar Flare': 'bg-gradient-to-br from-[#ff512f] to-[#dd2476] ring-orange-400',
+  'Quantum Violet': 'bg-gradient-to-br from-[#41295a] to-[#2F0743] ring-purple-500',
+  'Emerald Pulse': 'bg-gradient-to-br from-[#0f9b0f] to-[#000000] ring-green-500',
+  'Cosmic Storm': 'bg-gradient-to-br from-[#3a1c71] to-[#d76d77] ring-pink-400',
+  'Digital Aurora': 'bg-gradient-to-br from-[#00c6ff] to-[#0072ff] ring-cyan-400',
+  'Void Walker': 'bg-gradient-to-br from-[#232526] to-[#414345] ring-gray-500',
+  'Glitchcore': 'bg-gradient-to-br from-[#ff00cc] to-[#333399] ring-fuchsia-500'
+};
 
 interface PylonConfig {
   id: string;
@@ -52,10 +55,53 @@ export default function EonIDProfileSetup() {
   const [xpLevel, setXPLevel] = useState(0);
   const [avatar, setAvatar] = useState('');
   const [domain, setDomain] = useState('bussynfrfr');
-  const [selectedTheme, setSelectedTheme] = useState('');
+  const [theme, setTheme] = useState('');
   const [pylons, setPylons] = useState<PylonConfig[]>(defaultPylons);
   const [activeView, setActiveView] = useState<'grid' | 'list'>('grid');
   const [domainStatus, setDomainStatus] = useState<'unchecked' | 'checking' | 'available' | 'taken'>('unchecked');
+  const [domainAvailable, setDomainAvailable] = useState<boolean | null>(null);
+  const [checkingDomain, setCheckingDomain] = useState(false);
+
+  useEffect(() => {
+    if (domain.length < 3) {
+      setDomainAvailable(null);
+      setDomainStatus('unchecked');
+      return;
+    }
+    
+    const check = setTimeout(async () => {
+      setCheckingDomain(true);
+      setDomainStatus('checking');
+      
+      try {
+        // Use the correct Bonfida SNS SDK proxy endpoint
+        const res = await fetch(`https://sns-sdk-proxy.bonfida.workers.dev/resolve/${domain}`);
+        const data = await res.json();
+        
+        if (data.s === 'ok' && data.result) {
+          // Domain is taken (has an owner)
+          setDomainAvailable(false);
+          setDomainStatus('taken');
+        } else if (data.s === 'error' && data.result === 'Domain not found') {
+          // Domain is available
+          setDomainAvailable(true);
+          setDomainStatus('available');
+        } else {
+          // Unexpected response
+          setDomainAvailable(null);
+          setDomainStatus('unchecked');
+        }
+      } catch (error) {
+        console.error('Domain check failed:', error);
+        setDomainAvailable(null);
+        setDomainStatus('unchecked');
+      } finally {
+        setCheckingDomain(false);
+      }
+    }, 500);
+    
+    return () => clearTimeout(check);
+  }, [domain]);
 
   const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -80,23 +126,11 @@ export default function EonIDProfileSetup() {
     }
   };
 
-  const checkDomainAvailability = async () => {
-    if (!domain) return;
-    setDomainStatus('checking');
-    
-    try {
-      const res = await fetch(`https://naming.bonfida.org/domain/${domain}`);
-      const data = await res.json();
-      if (!data?.owner) {
-        setDomainStatus('available');
-      } else {
-        setDomainStatus('taken');
-      }
-    } catch (error) {
-      console.error('Domain check failed:', error);
-      setDomainStatus('unchecked');
-      alert('⚠️ Unable to check domain availability');
-    }
+  const recheckDomain = () => {
+    // Force a recheck by temporarily clearing and resetting the domain
+    const currentDomain = domain;
+    setDomain('');
+    setTimeout(() => setDomain(currentDomain), 100);
   };
 
   const claimDomain = async () => {
@@ -219,14 +253,14 @@ export default function EonIDProfileSetup() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Vaultskin Theme</label>
-                  <Select onValueChange={setSelectedTheme} defaultValue={selectedTheme}>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">EON-ID Theme</label>
+                  <Select onValueChange={setTheme} defaultValue={theme}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a theme" />
+                      <SelectValue placeholder="Select EON-ID Theme" />
                     </SelectTrigger>
                     <SelectContent>
-                      {vaultThemes.map((theme, idx) => (
-                        <SelectItem key={idx} value={theme}>{theme}</SelectItem>
+                      {Object.keys(eonThemes).map((themeName, idx) => (
+                        <SelectItem key={idx} value={themeName}>{themeName}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -236,55 +270,88 @@ export default function EonIDProfileSetup() {
               {/* Claim Domain */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-300 mb-2">Claim Your Wallet Domain</label>
-                <div className="flex gap-2">
-                  <Input 
-                    value={domain} 
-                    onChange={(e) => {
-                      setDomain(e.target.value);
-                      setDomainStatus('unchecked'); // Reset status when domain changes
-                    }} 
-                    placeholder="your-domain" 
-                    className="flex-1" 
-                  />
-                  <span className="flex items-center px-3 text-gray-400">.sol</span>
-                  {domainStatus === 'unchecked' && (
-                    <Button 
-                      onClick={checkDomainAvailability} 
-                      variant="outline"
-                      disabled={!domain.trim()}
-                    >
-                      🔍 Check Availability
-                    </Button>
-                  )}
-                  {domainStatus === 'checking' && (
-                    <Button variant="outline" disabled>
-                      ⏳ Checking...
-                    </Button>
-                  )}
+                <div className="relative">
+                  <div className="flex">
+                    <Input 
+                      value={domain} 
+                      onChange={(e) => {
+                        setDomain(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''));
+                      }} 
+                      placeholder="your-domain" 
+                      className="flex-1 rounded-r-none border-r-0" 
+                    />
+                    <div className="flex items-center px-3 bg-gray-800 border border-l-0 border-gray-600 rounded-r-md text-gray-400">
+                      .sol
+                    </div>
+                  </div>
+                  
+                  {/* Status Button */}
+                  <div className="mt-2">
+                    {(domainStatus === 'unchecked' || domain.length < 3) && (
+                      <Button 
+                        onClick={recheckDomain} 
+                        variant="outline"
+                        disabled={!domain.trim() || domain.length < 3}
+                        className="w-full"
+                      >
+                        🔍 Check Availability
+                      </Button>
+                    )}
+                    {domainStatus === 'checking' && (
+                      <Button variant="outline" disabled className="w-full">
+                        <div className="flex items-center gap-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+                          Checking...
+                        </div>
+                      </Button>
+                    )}
+                    {domainStatus === 'available' && (
+                      <Button 
+                        onClick={claimDomain} 
+                        className="w-full bg-green-600 hover:bg-green-700 text-white border-green-600"
+                      >
+                        ✅ Claim Domain
+                      </Button>
+                    )}
+                    {domainStatus === 'taken' && (
+                      <Button 
+                        onClick={recheckDomain} 
+                        variant="outline"
+                        className="w-full border-red-500 text-red-400 hover:bg-red-500/10"
+                      >
+                        ❌ Taken - Try Another
+                      </Button>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Status Messages */}
+                <div className="mt-2 min-h-[20px]">
                   {domainStatus === 'available' && (
-                    <Button 
-                      onClick={claimDomain} 
-                      className="bg-green-600 hover:bg-green-700 text-white"
-                    >
-                      ✅ Claim Domain
-                    </Button>
+                    <p className="text-xs text-green-400 flex items-center gap-1">
+                      <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                      Domain is available for claiming!
+                    </p>
                   )}
                   {domainStatus === 'taken' && (
-                    <Button 
-                      onClick={() => setDomainStatus('unchecked')} 
-                      variant="outline"
-                      className="border-red-500 text-red-400"
-                    >
-                      ❌ Taken - Try Another
-                    </Button>
+                    <p className="text-xs text-red-400 flex items-center gap-1">
+                      <span className="w-2 h-2 bg-red-400 rounded-full"></span>
+                      This domain is already taken. Try a different name.
+                    </p>
+                  )}
+                  {domain.length > 0 && domain.length < 3 && (
+                    <p className="text-xs text-yellow-400 flex items-center gap-1">
+                      <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+                      Domain must be at least 3 characters long
+                    </p>
+                  )}
+                  {domainStatus === 'checking' && (
+                    <p className="text-xs text-blue-400 flex items-center gap-1">
+                      <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+                      Checking domain availability...
+                    </p>
                   )}
                 </div>
-                {domainStatus === 'available' && (
-                  <p className="text-xs text-green-400 mt-1">✅ Domain is available for claiming!</p>
-                )}
-                {domainStatus === 'taken' && (
-                  <p className="text-xs text-red-400 mt-1">❌ This domain is already taken. Try a different name.</p>
-                )}
               </div>
 
               {/* Bio */}
@@ -387,35 +454,43 @@ export default function EonIDProfileSetup() {
                 <h2 className="text-2xl font-bold text-blue-300">Dashboard Preview</h2>
               </div>
               
-              <div className="rounded-xl bg-gradient-to-br from-[#2b2b45] to-[#1a1a2e] p-6 border border-violet-500/30">
+              <div className={`rounded-xl p-6 border text-white transition-all duration-300 ${
+                theme && eonThemes[theme as keyof typeof eonThemes] 
+                  ? `${eonThemes[theme as keyof typeof eonThemes]} border-opacity-50` 
+                  : 'bg-gradient-to-br from-[#2b2b45] to-[#1a1a2e] border-violet-500/30'
+              }`}>
                 <div className="flex items-center gap-4">
-                  <Avatar className="w-16 h-16 ring-2 ring-violet-500">
+                  <Avatar className={`w-16 h-16 ring-2 transition-all duration-300 ${
+                    theme && eonThemes[theme as keyof typeof eonThemes] 
+                      ? eonThemes[theme as keyof typeof eonThemes].split(' ').find((cls: string) => cls.includes('ring')) || 'ring-violet-500'
+                      : 'ring-violet-500'
+                  }`}>
                     <AvatarImage src={avatar} />
                     <AvatarFallback>👤</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
                     <h3 className="text-xl font-bold">{username || 'Your Display Name'}</h3>
-                    <p className="text-sm text-violet-300">
+                    <p className="text-sm opacity-90">
                       @{username.toLowerCase() || 'username'} • {title || 'Builder'}
                     </p>
-                    <p className="text-xs text-gray-400">{domain || 'unclaimed'}.sol</p>
+                    <p className="text-xs opacity-70">{domain || 'unclaimed'}.sol</p>
                     
                     {/* XP Progress */}
                     <div className="mt-2">
-                      <p className="text-xs text-gray-300 mb-1">XP Progress</p>
-                      <div className="w-full bg-neutral-800 rounded-full h-2">
+                      <p className="text-xs opacity-80 mb-1">XP Progress</p>
+                      <div className="w-full bg-black/20 rounded-full h-2">
                         <div 
-                          className="h-2 bg-violet-500 rounded-full transition-all duration-300" 
+                          className="h-2 bg-white/80 rounded-full transition-all duration-300" 
                           style={{ width: `${Math.min(xpLevel * 10, 100)}%` }}
                         />
                       </div>
-                      <p className="text-xs mt-1 text-gray-400">
+                      <p className="text-xs mt-1 opacity-70">
                         {xpLevel} / 1000 XP ({Math.min(xpLevel * 0.1, 100).toFixed(1)}%)
                       </p>
                     </div>
                   </div>
                 </div>
-                <p className="text-sm text-gray-300 mt-4">
+                <p className="text-sm opacity-80 mt-4">
                   This is how your EON-ID will appear on your dashboard
                 </p>
               </div>
