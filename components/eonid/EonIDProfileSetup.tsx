@@ -522,10 +522,10 @@ export default function EonIDProfileSetup() {
                   <p className="text-xs text-muted-foreground mt-1">Max 5MB, JPG/PNG</p>
                 </div>
 
-                {/* Badge Toggle */}
+                {/* Badges + Holdings Display Settings */}
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-semibold">Badges</p>
+                    <p className="text-sm font-semibold">Badges + Holdings Display</p>
                     <Button
                       variant="outline"
                       size="sm"
@@ -537,38 +537,43 @@ export default function EonIDProfileSetup() {
                   </div>
                   
                   <div className="bg-neutral-900 p-3 rounded-lg border border-neutral-700">
-                    {/* Badges Grid */}
-                    <div className="grid grid-cols-4 gap-2 mb-3">
-                      <BadgeSelector badges={selectedBadges} toggleBadge={toggleBadge} />
-                    </div>
-                    
-                    {/* Holdings Settings */}
-                    <div className="border-t border-neutral-700 pt-3">
-                      <p className="text-xs font-semibold text-gray-300 mb-2">Holdings Display Options</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {[
-                          { key: 'showTotalHoldings', label: 'Total Holdings', icon: '💰' },
-                          { key: 'showStaked', label: 'Staked', icon: '🔒' },
-                          { key: 'showLocked', label: 'Locked', icon: '🔐' },
-                          { key: 'showPlatformTotal', label: 'Platform Total', icon: '📊' },
-                          { key: 'showPortfolioValue', label: 'Portfolio Value', icon: '💎' }
-                        ].map((setting) => (
-                          <label key={setting.key} className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={holdingsSettings[setting.key as keyof typeof holdingsSettings]}
-                              onChange={(e) => setHoldingsSettings(prev => ({
-                                ...prev,
-                                [setting.key]: e.target.checked
-                              }))}
-                              className="w-3 h-3 rounded border-gray-600 bg-gray-700 text-violet-500 focus:ring-violet-500 focus:ring-1"
-                            />
-                            <span className="text-xs text-gray-300 flex items-center gap-1">
-                              <span>{setting.icon}</span>
-                              {setting.label}
-                            </span>
-                          </label>
-                        ))}
+                    <div className="flex gap-4">
+                      {/* Badges Section */}
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold text-gray-300 mb-2">Badges</p>
+                        <div className="grid grid-cols-4 gap-2">
+                          <BadgeSelector badges={selectedBadges} toggleBadge={toggleBadge} />
+                        </div>
+                      </div>
+                      
+                      {/* Holdings Settings Section */}
+                      <div className="flex-1 border-l border-neutral-700 pl-4">
+                        <p className="text-xs font-semibold text-gray-300 mb-2">Holdings Display Options</p>
+                        <div className="grid grid-cols-1 gap-2">
+                          {[
+                            { key: 'showTotalHoldings', label: 'Total Holdings', icon: '💰' },
+                            { key: 'showStaked', label: 'Staked', icon: '🔒' },
+                            { key: 'showLocked', label: 'Locked', icon: '🔐' },
+                            { key: 'showPlatformTotal', label: 'Platform Total', icon: '📊' },
+                            { key: 'showPortfolioValue', label: 'Portfolio Value', icon: '💎' }
+                          ].map((setting) => (
+                            <label key={setting.key} className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={holdingsSettings[setting.key as keyof typeof holdingsSettings]}
+                                onChange={(e) => setHoldingsSettings(prev => ({
+                                  ...prev,
+                                  [setting.key]: e.target.checked
+                                }))}
+                                className="w-3 h-3 rounded border-gray-600 bg-gray-700 text-violet-500 focus:ring-violet-500 focus:ring-1"
+                              />
+                              <span className="text-xs text-gray-300 flex items-center gap-1">
+                                <span>{setting.icon}</span>
+                                {setting.label}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
