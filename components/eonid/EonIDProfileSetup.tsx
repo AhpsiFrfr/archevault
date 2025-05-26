@@ -504,7 +504,17 @@ export default function EonIDProfileSetup() {
 
                 {/* Badge Toggle */}
                 <div className="flex-1">
-                  <p className="text-sm font-semibold mb-1">Badges</p>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm font-semibold">Badges</p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowHoldings(!showHoldings)}
+                      className="text-xs h-6 px-2 bg-gray-800/50 hover:bg-violet-600/20"
+                    >
+                      {showHoldings ? '👁️ Hide' : '💰 Show'} Holdings
+                    </Button>
+                  </div>
                   <div className="grid grid-cols-4 gap-2 bg-neutral-900 p-3 rounded-lg border border-neutral-700">
                     <BadgeSelector badges={selectedBadges} toggleBadge={toggleBadge} />
                   </div>
@@ -640,42 +650,7 @@ export default function EonIDProfileSetup() {
                         <h2 className="text-lg text-gray-400 -mt-1">{title || 'Builder'}</h2>
                       </div>
                       
-                      {/* Compact Badges & Holdings Toggle */}
-                      <div className="flex flex-col items-end gap-2">
-                        {/* Badges Row */}
-                        {selectedBadges && selectedBadges.length > 0 && (
-                          <div className="flex items-center gap-1">
-                            {selectedBadges.slice(0, 4).map((badge, index) => (
-                              <div key={index} className="relative">
-                                <img
-                                  src={`/badges/${badge}`}
-                                  alt={badge}
-                                  className="w-6 h-6 rounded border border-white/20"
-                                  onError={(e) => {
-                                    const target = e.target as HTMLImageElement;
-                                    target.style.display = 'none';
-                                  }}
-                                />
-                              </div>
-                            ))}
-                            {selectedBadges.length > 4 && (
-                              <div className="w-6 h-6 rounded bg-gray-700/50 border border-white/20 flex items-center justify-center text-xs text-gray-300">
-                                +{selectedBadges.length - 4}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                        
-                        {/* Show Holdings Toggle */}
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setShowHoldings(!showHoldings)}
-                          className="text-xs h-6 px-2 bg-gray-800/50 hover:bg-violet-600/20"
-                        >
-                          {showHoldings ? '👁️ Hide' : '💰 Show'} Holdings
-                        </Button>
-                      </div>
+
                     </div>
 
                     {/* XP Progress */}
@@ -750,8 +725,35 @@ export default function EonIDProfileSetup() {
 
                 {/* Bottom Actions Row */}
                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-700/50">
-                  <div className="text-xs text-gray-400">
-                    Preview updates in real-time
+                  {/* Selected Badges Display */}
+                  <div className="flex items-center gap-2">
+                    {selectedBadges && selectedBadges.length > 0 ? (
+                      <>
+                        <span className="text-xs text-gray-400">Badges:</span>
+                        <div className="flex items-center gap-1">
+                          {selectedBadges.slice(0, 6).map((badge, index) => (
+                            <div key={index} className="relative">
+                              <img
+                                src={`/badges/${badge}`}
+                                alt={badge}
+                                className="w-6 h-6 rounded border border-white/20"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                }}
+                              />
+                            </div>
+                          ))}
+                          {selectedBadges.length > 6 && (
+                            <div className="w-6 h-6 rounded bg-gray-700/50 border border-white/20 flex items-center justify-center text-xs text-gray-300">
+                              +{selectedBadges.length - 6}
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <span className="text-xs text-gray-400">No badges selected</span>
+                    )}
                   </div>
                   <Button 
                     variant="outline" 
