@@ -19,7 +19,7 @@ export default function EonID() {
         setAuthChecking(false)
         return
       }
-
+      
       // Check localStorage for recent authentication
       const storedWalletAddress = localStorage.getItem('wallet_address')
       const authTimestamp = localStorage.getItem('auth_timestamp')
@@ -34,8 +34,8 @@ export default function EonID() {
         if (timeDiff < tenMinutes) {
           setWalletAddress(storedWalletAddress)
           setAuthChecking(false)
-          return
-        }
+      return
+    }
       }
 
       // No valid authentication found
@@ -44,7 +44,7 @@ export default function EonID() {
 
     checkAuthState()
   }, [user])
-
+      
   if (authChecking) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">

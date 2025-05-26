@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useUser } from '@/context/UserContext';
+import { supabase } from '@/lib/supabaseClient';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
@@ -56,6 +59,9 @@ interface SocialLink {
 }
 
 export default function EonIDProfileSetup() {
+  const router = useRouter();
+  const { user } = useUser();
+  
   const [username, setUsername] = useState('Bussynfrfr');
   const [title, setTitle] = useState('King of The Rats');
   const [bio, setBio] = useState("I'm just bussyn frfr.");
@@ -72,6 +78,80 @@ export default function EonIDProfileSetup() {
   const [editingSocial, setEditingSocial] = useState<string | null>(null);
   const [tempSocialUsername, setTempSocialUsername] = useState('');
   const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
+  
+  // Save state
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Load existing profile data
+  useEffect(() => {
+    const loadExistingProfile = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('eon_profiles')
+          .select('*')
+          .eq('wallet', user.wallet || user.id)
+          .single();
+
+        if (data && !error) {
+          // Load existing profile data
+          setUsername(data.username || 'Bussynfrfr');
+          setTitle(data.title || 'King of The Rats');
+          setBio(data.bio || "I'm just bussyn frfr.");
+          setXPLevel(data.xp || 0);
+          setAvatar(data.avatar_url || '');
+          setDomain(data.domain || 'bussynfrfr');
+          setTheme(data.theme || '');
+          setSelectedBadges(data.selected_badges || []);
+          
+          // Load social links
+          if (data.social_links && Array.isArray(data.social_links)) {
+            const loadedSocialLinks = data.social_links.map((link: any) => ({
+              platform: link.platform,
+              username: link.username,
+              icon: getSocialIcon(link.platform) || <div></div>
+            }));
+            setSocialLinks(loadedSocialLinks);
+          }
+          
+          // Load pylon configuration
+          if (data.pylons) {
+            const updatedPylons = pylons.map(pylon => {
+              const pylonMapping: Record<string, string> = {
+                'refraGate': 'show_refraGate',
+                'aetherFeed': 'show_aetherFeed',
+                'vaultSkin': 'show_vaultSkin',
+                'phasePulse': 'show_phasePulse',
+                'sigilSynth': 'show_sigilSynth',
+                'resonantArchive': 'show_resonantArchive'
+              };
+              
+              const dbKey = pylonMapping[pylon.id];
+              if (dbKey && typeof data.pylons[dbKey] === 'boolean') {
+                return { ...pylon, enabled: data.pylons[dbKey] };
+              }
+              
+              return pylon;
+            });
+            setPylons(updatedPylons);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading existing profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadExistingProfile();
+  }, [user]);
 
   useEffect(() => {
     if (domain.length < 3) {
@@ -260,6 +340,115 @@ export default function EonIDProfileSetup() {
     customization: 'Customization'
   };
 
+  const saveProfile = async () => {
+    if (!user) {
+      setSaveError('User not authenticated');
+      return;
+    }
+
+    setSaving(true);
+    setSaveError(null);
+
+    try {
+      // Prepare pylon configuration
+      const pylonConfig = pylons.reduce((acc, pylon) => {
+        // Map pylon IDs to the expected database format
+        const pylonMapping: Record<string, string> = {
+          'refraGate': 'show_refraGate',
+          'aetherFeed': 'show_aetherFeed',
+          'vaultSkin': 'show_vaultSkin',
+          'phasePulse': 'show_phasePulse',
+          'sigilSynth': 'show_sigilSynth',
+          'resonantArchive': 'show_resonantArchive'
+        };
+        
+        const dbKey = pylonMapping[pylon.id];
+        if (dbKey) {
+          acc[dbKey] = pylon.enabled;
+        }
+        
+        return acc;
+      }, {} as Record<string, boolean>);
+
+      // Prepare social links data
+      const socialLinksData = socialLinks.map(link => ({
+        platform: link.platform,
+        username: link.username
+      }));
+
+      // Prepare profile data for database
+      const profileData = {
+        wallet: user.wallet || user.id,
+        username: username.trim() || 'Anonymous',
+        title: title || 'Builder',
+        bio: bio.trim() || '',
+        avatar_url: avatar || '',
+        xp: xpLevel,
+        domain: domain.trim() || '',
+        theme: theme || '',
+        selected_badges: selectedBadges,
+        social_links: socialLinksData,
+        
+        // Widget visibility (defaulting to true for better UX)
+        show_badges: true,
+        show_achievements: true,
+        show_nfts: true,
+        show_holdings: true,
+        show_staked: true,
+        
+        // Pylon configuration
+        pylons: pylonConfig
+      };
+
+      console.log('Saving profile data:', profileData);
+
+      // Upsert profile data to Supabase
+      const { data, error } = await supabase
+        .from('eon_profiles')
+        .upsert(profileData, {
+          onConflict: 'wallet',
+          ignoreDuplicates: false
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error saving profile:', error);
+        setSaveError(error.message || 'Failed to save profile');
+        return;
+      }
+
+      console.log('Profile saved successfully:', data);
+
+      // Show success message briefly before redirect
+      setSaving(false);
+      setSaveSuccess(true);
+      
+      // Redirect to dashboard after successful save
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1500);
+
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      setSaveError(error instanceof Error ? error.message : 'Failed to save profile');
+      setSaving(false);
+    }
+  };
+
+  // Show loading screen while profile data is being loaded
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-blue-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin h-12 w-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-blue-300 mb-2">Loading Profile</h2>
+          <p className="text-gray-400">Preparing your EON-ID setup...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-blue-900 text-white p-6">
       <div className="max-w-7xl mx-auto">
@@ -276,39 +465,71 @@ export default function EonIDProfileSetup() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Side – Profile Setup */}
           <div className="space-y-6">
-            {/* EON-ID Profile Manager */}
+            {/* EON-ID Manager */}
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700">
               <div className="flex items-center gap-2 mb-6">
                 <span className="text-2xl">👤</span>
-                <h2 className="text-2xl font-bold text-blue-300">EON-ID Profile Manager</h2>
+                <h2 className="text-2xl font-bold text-blue-300">EON-ID Manager</h2>
               </div>
 
-              {/* Profile Avatar */}
+              {/* Profile Avatar and Badges */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-300 mb-3">Profile Avatar</label>
-                <div className="flex items-center gap-4">
-                  <Avatar className="w-16 h-16 ring-2 ring-blue-500">
-                    <AvatarImage src={avatar} />
-                    <AvatarFallback>👤</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <input
-                      type="file"
-                      id="avatar-upload"
-                      accept="image/*"
-                      onChange={handleAvatarUpload}
-                      className="hidden"
-                      aria-label="Upload avatar image"
-                    />
-                    <Button 
-                      variant="outline" 
-                      className="flex items-center gap-2"
-                      onClick={() => document.getElementById('avatar-upload')?.click()}
-                    >
-                      <ArrowUpTrayIcon className="w-4 h-4" />
-                      Upload Avatar
-                    </Button>
-                    <p className="text-xs text-gray-400 mt-1">Max 5MB, JPG/PNG</p>
+                <div className="flex items-start gap-4">
+                  <div className="flex items-center gap-4">
+                    <Avatar className="w-16 h-16 ring-2 ring-blue-500">
+                      <AvatarImage src={avatar} />
+                      <AvatarFallback>👤</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <input
+                        type="file"
+                        id="avatar-upload"
+                        accept="image/*"
+                        onChange={handleAvatarUpload}
+                        className="hidden"
+                        aria-label="Upload avatar image"
+                      />
+                      <Button 
+                        variant="outline" 
+                        className="flex items-center gap-2"
+                        onClick={() => document.getElementById('avatar-upload')?.click()}
+                      >
+                        <ArrowUpTrayIcon className="w-4 h-4" />
+                        Upload Avatar
+                      </Button>
+                      <p className="text-xs text-gray-400 mt-1">Max 5MB, JPG/PNG</p>
+                    </div>
+                  </div>
+                  
+                  {/* Badges Section */}
+                  <div className="flex-1 ml-4">
+                    <label className="block text-sm font-medium text-gray-300 mb-3">Badges</label>
+                    <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                      <BadgeSelector badges={selectedBadges} toggleBadge={toggleBadge} />
+                      
+                      {/* Selected Badges Display */}
+                      {selectedBadges.length > 0 && (
+                        <div className="mt-3">
+                          <p className="text-xs text-gray-400 mb-2">Selected ({selectedBadges.length}):</p>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedBadges.map((badge, idx) => (
+                              <div key={idx} className="flex items-center gap-1 bg-gray-700/30 rounded-lg p-1">
+                                <img src={`/badges/${badge}`} alt={badge} className="w-5 h-5 rounded" />
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => toggleBadge(badge)}
+                                  className="text-xs h-5 px-1"
+                                >
+                                  ×
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -612,45 +833,17 @@ export default function EonIDProfileSetup() {
                 )}
               </div>
 
-              {/* Badge Selector */}
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-300 mb-3">Profile Badges</label>
-                <p className="text-xs text-gray-400 mb-3">Select badges to display on your profile</p>
-                <BadgeSelector badges={selectedBadges} toggleBadge={toggleBadge} />
-                
-                {/* Selected Badges Display */}
-                {selectedBadges.length > 0 && (
-                  <div className="mt-4">
-                    <p className="text-xs text-gray-400 mb-2">Selected Badges ({selectedBadges.length}):</p>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedBadges.map((badge, idx) => (
-                        <div key={idx} className="flex items-center gap-2 bg-gray-700/30 rounded-lg p-2">
-                          <img src={`/badges/${badge}`} alt={badge} className="w-6 h-6 rounded" />
-                          <span className="text-sm">{badge.replace('.png', '').replace('badge', 'Badge ')}</span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => toggleBadge(badge)}
-                            className="text-xs ml-2"
-                          >
-                            Remove
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+
             </div>
           </div>
 
           {/* Right Side – Preview + Pylon Manager */}
           <div className="space-y-6">
-            {/* Dashboard Preview */}
+            {/* EON-ID Preview */}
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700">
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-2xl">👤</span>
-                <h2 className="text-2xl font-bold text-blue-300">Dashboard Preview</h2>
+                <h2 className="text-2xl font-bold text-blue-300">EON-ID Preview</h2>
               </div>
               
               <div className={`rounded-xl p-6 border text-white transition-all duration-300 ${
@@ -729,10 +922,7 @@ export default function EonIDProfileSetup() {
                     </div>
                   </div>
                 )}
-                
-                <p className="text-sm opacity-80 mt-4">
-                  This is how your EON-ID will appear on your dashboard
-                </p>
+
               </div>
             </div>
 
@@ -848,13 +1038,51 @@ export default function EonIDProfileSetup() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 pt-8 max-w-md mx-auto">
-          <Button variant="outline" className="flex-1">
+          <Button 
+            variant="outline" 
+            className="flex-1"
+            onClick={() => router.push('/dashboard')}
+            disabled={saving}
+          >
             Cancel
           </Button>
-          <Button className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600">
-            Save and Enter Vault
+          <Button 
+            className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={saveProfile}
+            disabled={saving || !user}
+          >
+            {saving ? (
+              <div className="flex items-center gap-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                Saving...
+              </div>
+            ) : (
+              'Save and Enter Vault'
+            )}
           </Button>
         </div>
+        
+        {/* Success Message */}
+        {saveSuccess && (
+          <div className="mt-4 p-4 bg-green-900/50 border border-green-500 rounded-lg text-center max-w-md mx-auto">
+            <p className="text-green-300 text-sm">✅ Profile saved successfully! Redirecting to dashboard...</p>
+          </div>
+        )}
+        
+        {/* Error Message */}
+        {saveError && (
+          <div className="mt-4 p-4 bg-red-900/50 border border-red-500 rounded-lg text-center max-w-md mx-auto">
+            <p className="text-red-300 text-sm">{saveError}</p>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-2"
+              onClick={() => setSaveError(null)}
+            >
+              Dismiss
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
