@@ -5,6 +5,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import BadgeSelector from './BadgeSelector';
 
 const defaultTitles = [
   'Builder',
@@ -70,6 +71,7 @@ export default function EonIDProfileSetup() {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [editingSocial, setEditingSocial] = useState<string | null>(null);
   const [tempSocialUsername, setTempSocialUsername] = useState('');
+  const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
 
   useEffect(() => {
     if (domain.length < 3) {
@@ -232,6 +234,14 @@ export default function EonIDProfileSetup() {
     setSocialLinks(prev => prev.filter(link => link.platform !== platform));
     setEditingSocial(null);
     setTempSocialUsername('');
+  };
+
+  const toggleBadge = (badge: string) => {
+    setSelectedBadges(prev => 
+      prev.includes(badge) 
+        ? prev.filter(b => b !== badge)
+        : [...prev, badge]
+    );
   };
 
   const activePylons = pylons.filter(p => p.enabled);
@@ -601,6 +611,36 @@ export default function EonIDProfileSetup() {
                   </div>
                 )}
               </div>
+
+              {/* Badge Selector */}
+              <div className="mt-6">
+                <label className="block text-sm font-medium text-gray-300 mb-3">Profile Badges</label>
+                <p className="text-xs text-gray-400 mb-3">Select badges to display on your profile</p>
+                <BadgeSelector badges={selectedBadges} toggleBadge={toggleBadge} />
+                
+                {/* Selected Badges Display */}
+                {selectedBadges.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-xs text-gray-400 mb-2">Selected Badges ({selectedBadges.length}):</p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedBadges.map((badge, idx) => (
+                        <div key={idx} className="flex items-center gap-2 bg-gray-700/30 rounded-lg p-2">
+                          <img src={`/badges/${badge}`} alt={badge} className="w-6 h-6 rounded" />
+                          <span className="text-sm">{badge.replace('.png', '').replace('badge', 'Badge ')}</span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => toggleBadge(badge)}
+                            className="text-xs ml-2"
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -666,6 +706,24 @@ export default function EonIDProfileSetup() {
                         <div key={idx} className="flex items-center gap-1 bg-black/20 rounded-full px-2 py-1">
                           <span className="w-3 h-3">{link.icon}</span>
                           <span className="text-xs opacity-90">@{link.username}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Badges Preview */}
+                {selectedBadges.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-xs opacity-80 mb-2">Profile Badges</p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedBadges.map((badge, idx) => (
+                        <div key={idx} className="relative">
+                          <img 
+                            src={`/badges/${badge}`} 
+                            alt={badge} 
+                            className="w-8 h-8 rounded border border-white/20" 
+                          />
                         </div>
                       ))}
                     </div>
