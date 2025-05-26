@@ -29,15 +29,20 @@ export default function EonID() {
   })
   const [domainAvailable, setDomainAvailable] = useState<boolean | null>(null)
   const [loading, setLoading] = useState(false)
+  
+  // Check for authentication state from multiple sources
+  const [authChecking, setAuthChecking] = useState(true)
+  const [walletAddress, setWalletAddress] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!user) return
+    const currentWalletAddress = user?.wallet || user?.id || walletAddress
+    if (!currentWalletAddress) return
     
     const loadProfile = async () => {
       const { data, error } = await supabase
         .from('eon_profiles')
         .select('*')
-        .eq('wallet', user.id)
+        .eq('wallet', currentWalletAddress)
         .single()
       
       if (data && !error) {
@@ -46,7 +51,7 @@ export default function EonID() {
     }
     
     loadProfile()
-  }, [user])
+  }, [user, walletAddress])
 
 
 
@@ -94,7 +99,9 @@ export default function EonID() {
   }
 
   const handleSave = async () => {
-    if (!user) {
+    const currentWalletAddress = user?.wallet || user?.id || walletAddress
+    
+    if (!currentWalletAddress) {
       alert('Please connect your wallet first.')
       return
     }
@@ -110,7 +117,7 @@ export default function EonID() {
         .from('eon_profiles')
         .upsert({ 
           ...form, 
-          wallet: user.id,
+          wallet: currentWalletAddress,
           updated_at: new Date().toISOString()
         })
       
@@ -129,7 +136,52 @@ export default function EonID() {
     }
   }
 
-  if (!user) {
+  useEffect(() => {
+    const checkAuthState = async () => {
+      // Check if user is authenticated via UserContext
+      if (user) {
+        setWalletAddress(user.wallet || user.id)
+        setAuthChecking(false)
+        return
+      }
+
+      // Check localStorage for recent authentication
+      const storedWalletAddress = localStorage.getItem('wallet_address')
+      const authTimestamp = localStorage.getItem('auth_timestamp')
+      
+      if (storedWalletAddress && authTimestamp) {
+        // Check if authentication is recent (within last 10 minutes)
+        const authTime = new Date(authTimestamp)
+        const now = new Date()
+        const timeDiff = now.getTime() - authTime.getTime()
+        const tenMinutes = 10 * 60 * 1000
+        
+        if (timeDiff < tenMinutes) {
+          setWalletAddress(storedWalletAddress)
+          setAuthChecking(false)
+          return
+        }
+      }
+
+      // No valid authentication found
+      setAuthChecking(false)
+    }
+
+    checkAuthState()
+  }, [user])
+
+  if (authChecking) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+          <p className="text-gray-400">Checking authentication...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user && !walletAddress) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
