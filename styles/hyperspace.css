@@ -1,0 +1,65 @@
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes lightning-flash {
+  0%, 100% {
+    opacity: 0;
+  }
+  10%, 90% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.lightning-animation {
+  animation: lightning-flash 0.3s ease-out;
+}
+
+@keyframes rotate-3d {
+  0% {
+    transform: perspective(800px) rotateY(0) rotateX(0);
+  }
+  50% {
+    transform: perspective(800px) rotateY(180deg) rotateX(30deg);
+  }
+  100% {
+    transform: perspective(800px) rotateY(360deg) rotateX(0);
+  }
+}
+
+.rotate-3d-animation {
+  animation: rotate-3d 8s infinite linear;
+}
+
+@keyframes warp-tunnel {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateZ(-50px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2) translateZ(50px);
+  }
+}
+
+.warp-tunnel-animation {
+  animation: warp-tunnel 4s ease-in-out;
+} 

@@ -1,0 +1,14 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="40" height="40" rx="20" fill="url(#systemGradient)"/>
+  <path d="M12 15h16v10H12z" fill="rgba(255,255,255,0.2)" stroke="rgba(0,255,170,0.8)" strokeWidth="1.5"/>
+  <circle cx="16" cy="20" r="2" fill="#00FFAA"/>
+  <circle cx="24" cy="20" r="2" fill="#00FFAA"/>
+  <path d="M14 27h12" stroke="#00FFAA" strokeWidth="2" strokeLinecap="round"/>
+  <text x="20" y="13" textAnchor="middle" fill="#00FFAA" fontSize="8" fontWeight="bold">SYS</text>
+  <defs>
+    <linearGradient id="systemGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#1a1a2e"/>
+      <stop offset="100%" stopColor="#16213e"/>
+    </linearGradient>
+  </defs>
+</svg> 

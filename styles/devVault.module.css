@@ -1,0 +1,84 @@
+.featureCard {
+  @apply bg-[#1E1E2F]/80 backdrop-blur-md p-6 rounded-xl border border-white/5 
+         cursor-pointer transition-all duration-300;
+}
+
+.featureCard:hover {
+  @apply border-indigo-500/30 shadow-lg shadow-indigo-500/20;
+}
+
+.featureIcon {
+  @apply text-2xl mb-4;
+}
+
+.featureContent {
+  @apply space-y-2;
+}
+
+.featureTitle {
+  @apply text-lg font-semibold text-white;
+}
+
+.featureDescription {
+  @apply text-sm text-gray-400;
+}
+
+.featureStatus {
+  @apply flex items-center gap-2 mt-4 text-sm;
+}
+
+.statusDot {
+  @apply w-2 h-2 rounded-full;
+}
+
+.status-active .statusDot {
+  @apply bg-green-500;
+}
+
+.status-pending .statusDot {
+  @apply bg-yellow-500;
+}
+
+.status-development .statusDot {
+  @apply bg-blue-500;
+}
+
+.featureList {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.integrationStatus {
+  @apply bg-[#1E1E2F]/80 backdrop-blur-md p-6 rounded-xl border border-white/5;
+}
+
+.integrationTitle {
+  @apply text-xl font-semibold text-white mb-6;
+}
+
+.integrationList {
+  @apply space-y-4;
+}
+
+.integrationItem {
+  @apply bg-[#1E1E2F]/50 p-4 rounded-lg border border-white/10;
+}
+
+.integrationHeader {
+  @apply flex items-center gap-3;
+}
+
+.statusIndicator {
+  @apply w-3 h-3 rounded-full;
+}
+
+.integrationName {
+  @apply text-white font-medium;
+}
+
+.integrationSync {
+  @apply text-sm text-gray-400 mt-2;
+}
+
+.integrationDetails {
+  @apply text-sm text-gray-500 mt-1;
+} 

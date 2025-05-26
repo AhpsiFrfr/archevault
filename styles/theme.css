@@ -1,0 +1,16 @@
+:root {
+  --gold-glow: 0 0 16px 4px #ffd70088;
+}
+
+.text-gold-glow {
+  text-shadow: 0 0 8px #ffd700, 0 0 16px #ffd70088;
+}
+
+.animated-glyph {
+  animation: glyphPulse 3s infinite alternate;
+}
+
+@keyframes glyphPulse {
+  0% { filter: drop-shadow(0 0 2px #ffd700); }
+  100% { filter: drop-shadow(0 0 18px #ffd700); }
+}
