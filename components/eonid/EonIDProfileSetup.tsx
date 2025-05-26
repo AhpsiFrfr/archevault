@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import BadgeSelector from './BadgeSelector';
+import EonIDPanel from './EonIDPanel';
 
 const defaultTitles = [
   'Builder',
@@ -846,84 +847,26 @@ export default function EonIDProfileSetup() {
                 <h2 className="text-2xl font-bold text-blue-300">EON-ID Preview</h2>
               </div>
               
-              <div className={`rounded-xl p-6 border text-white transition-all duration-300 ${
-                theme && eonThemes[theme as keyof typeof eonThemes] 
-                  ? `${eonThemes[theme as keyof typeof eonThemes]} border-opacity-50` 
-                  : 'bg-gradient-to-br from-[#2b2b45] to-[#1a1a2e] border-violet-500/30'
-              }`}>
-                <div className="flex items-center gap-4">
-                  <Avatar className={`w-16 h-16 ring-2 transition-all duration-300 ${
-                    theme && eonThemes[theme as keyof typeof eonThemes] 
-                      ? eonThemes[theme as keyof typeof eonThemes].split(' ').find((cls: string) => cls.includes('ring')) || 'ring-violet-500'
-                      : 'ring-violet-500'
-                  }`}>
-                    <AvatarImage src={avatar} />
-                    <AvatarFallback>👤</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold">{username || 'Your Display Name'}</h3>
-                    <p className="text-sm opacity-90">
-                      @{username.toLowerCase() || 'username'} • {title || 'Builder'}
-                    </p>
-                    <p className="text-xs opacity-70">{domain || 'unclaimed'}.sol</p>
-                    
-                    {/* XP Progress */}
-                    <div className="mt-2">
-                      <p className="text-xs opacity-80 mb-1">XP Progress</p>
-                      <div className="w-full bg-black/20 rounded-full h-2">
-                        <div 
-                          className="h-2 bg-white/80 rounded-full transition-all duration-300" 
-                          style={{ width: `${Math.min(xpLevel * 10, 100)}%` }}
-                        />
-                      </div>
-                      <p className="text-xs mt-1 opacity-70">
-                        {xpLevel} / 1000 XP ({Math.min(xpLevel * 0.1, 100).toFixed(1)}%)
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Bio Preview */}
-                {bio && (
-                  <div className="mt-4">
-                    <p className="text-sm opacity-90">{bio}</p>
-                  </div>
-                )}
-                
-                {/* Social Links Preview */}
-                {socialLinks.length > 0 && (
-                  <div className="mt-4">
-                    <p className="text-xs opacity-80 mb-2">Social Links</p>
-                    <div className="flex flex-wrap gap-2">
-                      {socialLinks.map((link, idx) => (
-                        <div key={idx} className="flex items-center gap-1 bg-black/20 rounded-full px-2 py-1">
-                          <span className="w-3 h-3">{link.icon}</span>
-                          <span className="text-xs opacity-90">@{link.username}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {/* Badges Preview */}
-                {selectedBadges.length > 0 && (
-                  <div className="mt-4">
-                    <p className="text-xs opacity-80 mb-2">Profile Badges</p>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedBadges.map((badge, idx) => (
-                        <div key={idx} className="relative">
-                          <img 
-                            src={`/badges/${badge}`} 
-                            alt={badge} 
-                            className="w-8 h-8 rounded border border-white/20" 
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-              </div>
+              {/* New EON-ID Panel Preview */}
+              <EonIDPanel
+                username={username || 'Your Display Name'}
+                title={title || 'Builder'}
+                domain={domain || 'unclaimed'}
+                xpLevel={xpLevel}
+                theme={theme}
+                badges={selectedBadges}
+                showHoldings={true}
+                holdings={{
+                  total: '42,000',
+                  staked: '18,500',
+                  locked: '800,500',
+                  platformTotal: '54,298.75',
+                  valueUSD: '54,298.75',
+                  change24h: '+8.7%'
+                }}
+                referralUrl={`https://archevault.com/ref/${username.toLowerCase() || 'username'}`}
+                avatar={avatar}
+              />
             </div>
 
             {/* Dashboard Layout Manager */}
