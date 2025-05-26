@@ -85,6 +85,15 @@ export default function EonIDProfileSetup() {
   const [loading, setLoading] = useState(true);
   const [copySuccess, setCopySuccess] = useState(false);
   const [showHoldings, setShowHoldings] = useState(true);
+  
+  // Holdings display settings
+  const [holdingsSettings, setHoldingsSettings] = useState({
+    showTotalHoldings: true,
+    showStaked: true,
+    showLocked: true,
+    showPlatformTotal: true,
+    showPortfolioValue: true
+  });
 
   // Load existing profile data
   useEffect(() => {
@@ -111,6 +120,14 @@ export default function EonIDProfileSetup() {
           setDomain(data.domain || 'bussynfrfr');
           setTheme(data.theme || '');
           setSelectedBadges(data.selected_badges || []);
+          
+          // Load holdings settings
+          if (data.holdings_settings) {
+            setHoldingsSettings(data.holdings_settings);
+          }
+          if (typeof data.show_holdings === 'boolean') {
+            setShowHoldings(data.show_holdings);
+          }
           
           // Load social links
           if (data.social_links && Array.isArray(data.social_links)) {
@@ -394,8 +411,11 @@ export default function EonIDProfileSetup() {
         show_badges: true,
         show_achievements: true,
         show_nfts: true,
-        show_holdings: true,
+        show_holdings: showHoldings,
         show_staked: true,
+        
+        // Holdings display settings
+        holdings_settings: holdingsSettings,
         
         // Pylon configuration
         pylons: pylonConfig
@@ -515,8 +535,42 @@ export default function EonIDProfileSetup() {
                       {showHoldings ? '👁️ Hide' : '💰 Show'} Holdings
                     </Button>
                   </div>
-                  <div className="grid grid-cols-4 gap-2 bg-neutral-900 p-3 rounded-lg border border-neutral-700">
-                    <BadgeSelector badges={selectedBadges} toggleBadge={toggleBadge} />
+                  
+                  <div className="bg-neutral-900 p-3 rounded-lg border border-neutral-700">
+                    {/* Badges Grid */}
+                    <div className="grid grid-cols-4 gap-2 mb-3">
+                      <BadgeSelector badges={selectedBadges} toggleBadge={toggleBadge} />
+                    </div>
+                    
+                    {/* Holdings Settings */}
+                    <div className="border-t border-neutral-700 pt-3">
+                      <p className="text-xs font-semibold text-gray-300 mb-2">Holdings Display Options</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { key: 'showTotalHoldings', label: 'Total Holdings', icon: '💰' },
+                          { key: 'showStaked', label: 'Staked', icon: '🔒' },
+                          { key: 'showLocked', label: 'Locked', icon: '🔐' },
+                          { key: 'showPlatformTotal', label: 'Platform Total', icon: '📊' },
+                          { key: 'showPortfolioValue', label: 'Portfolio Value', icon: '💎' }
+                        ].map((setting) => (
+                          <label key={setting.key} className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={holdingsSettings[setting.key as keyof typeof holdingsSettings]}
+                              onChange={(e) => setHoldingsSettings(prev => ({
+                                ...prev,
+                                [setting.key]: e.target.checked
+                              }))}
+                              className="w-3 h-3 rounded border-gray-600 bg-gray-700 text-violet-500 focus:ring-violet-500 focus:ring-1"
+                            />
+                            <span className="text-xs text-gray-300 flex items-center gap-1">
+                              <span>{setting.icon}</span>
+                              {setting.label}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                   
                   {/* Selected Badges Display */}
@@ -697,28 +751,43 @@ export default function EonIDProfileSetup() {
                   {/* Holdings Panel */}
                   {showHoldings && (
                     <div className="w-56 bg-black/30 p-3 rounded-xl text-sm border border-neutral-700 transition-all duration-300">
-                      <div className="flex justify-between mb-1">
-                        <span className="text-gray-400">Total Holdings</span>
-                        <span className="text-yellow-400 font-bold">42,000 EONIC</span>
-                      </div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-gray-400">Staked</span>
-                        <span className="text-cyan-400">18,500</span>
-                      </div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-gray-400">Locked</span>
-                        <span className="text-green-400">800,500</span>
-                      </div>
-                      <div className="flex justify-between mb-1">
-                        <span className="text-gray-400">Platform Total</span>
-                        <span className="text-pink-400">54,298.75</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Portfolio Value</span>
-                        <span className="text-emerald-400">
-                          $54,298.75 (+8.7%)
-                        </span>
-                      </div>
+                      {holdingsSettings.showTotalHoldings && (
+                        <div className="flex justify-between mb-1">
+                          <span className="text-gray-400">Total Holdings</span>
+                          <span className="text-yellow-400 font-bold">42,000 EONIC</span>
+                        </div>
+                      )}
+                      {holdingsSettings.showStaked && (
+                        <div className="flex justify-between mb-1">
+                          <span className="text-gray-400">Staked</span>
+                          <span className="text-cyan-400">18,500</span>
+                        </div>
+                      )}
+                      {holdingsSettings.showLocked && (
+                        <div className="flex justify-between mb-1">
+                          <span className="text-gray-400">Locked</span>
+                          <span className="text-green-400">800,500</span>
+                        </div>
+                      )}
+                      {holdingsSettings.showPlatformTotal && (
+                        <div className="flex justify-between mb-1">
+                          <span className="text-gray-400">Platform Total</span>
+                          <span className="text-pink-400">54,298.75</span>
+                        </div>
+                      )}
+                      {holdingsSettings.showPortfolioValue && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Portfolio Value</span>
+                          <span className="text-emerald-400">
+                            $54,298.75 (+8.7%)
+                          </span>
+                        </div>
+                      )}
+                      {!Object.values(holdingsSettings).some(Boolean) && (
+                        <div className="text-center text-gray-500 text-xs">
+                          No holdings data selected
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
