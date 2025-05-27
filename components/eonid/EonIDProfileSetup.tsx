@@ -483,334 +483,388 @@ export default function EonIDProfileSetup() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Side – Profile Setup */}
-          <div className="space-y-6">
-            {/* EON-ID Manager */}
-            <div className="rounded-2xl border border-neutral-700 bg-gradient-to-br from-[#0d0d17] to-[#111a2b] p-6 shadow-2xl text-white">
-              <h2 className="text-2xl font-bold mb-6">🪪 EON-ID Manager</h2>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          {/* Left Column: Enhanced EON-ID Manager with Polish */}
+          <div className="bg-gradient-to-br from-[#0a0b14] via-[#0c0e1a] to-[#0e1020] border border-neutral-800/60 rounded-2xl p-8 shadow-2xl text-white backdrop-blur-sm">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg">
+                <span className="text-xl">🪪</span>
+              </div>
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">
+                EON-ID Manager
+              </h2>
+            </div>
 
-              <div className="flex gap-6 items-start mb-6">
-                {/* Avatar Upload */}
-                <div className="flex flex-col items-center">
+            <div className="space-y-8">
+              {/* Enhanced Avatar Upload Section */}
+              <div className="flex flex-col items-center space-y-4">
+                <div className="relative group">
                   {avatar ? (
                     <img
                       src={avatar}
                       alt="Avatar"
-                      className="w-20 h-20 rounded-full border-4 border-violet-600 shadow-md object-cover"
+                      className={`w-28 h-28 rounded-full border-4 object-cover transition-all duration-500 group-hover:scale-105 ${
+                        theme === 'Nebula Blue' ? 'border-blue-400 shadow-lg shadow-blue-500/30' :
+                        theme === 'Solar Flare' ? 'border-orange-400 shadow-lg shadow-orange-500/30' :
+                        theme === 'Quantum Violet' ? 'border-purple-400 shadow-lg shadow-purple-500/30' :
+                        theme === 'Emerald Pulse' ? 'border-green-400 shadow-lg shadow-green-500/30' :
+                        theme === 'Cosmic Storm' ? 'border-pink-400 shadow-lg shadow-pink-500/30' :
+                        theme === 'Digital Aurora' ? 'border-cyan-400 shadow-lg shadow-cyan-500/30' :
+                        theme === 'Void Walker' ? 'border-gray-400 shadow-lg shadow-gray-500/30' :
+                        theme === 'Glitchcore' ? 'border-fuchsia-400 shadow-lg shadow-fuchsia-500/30' :
+                        'border-violet-400 shadow-lg shadow-violet-500/30'
+                      }`}
                     />
                   ) : (
-                    <div className="w-20 h-20 rounded-full border-4 border-violet-600 shadow-md bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center text-xl">
+                    <div className={`w-28 h-28 rounded-full border-4 bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center text-3xl transition-all duration-500 group-hover:scale-105 ${
+                      theme === 'Nebula Blue' ? 'border-blue-400 shadow-lg shadow-blue-500/30' :
+                      theme === 'Solar Flare' ? 'border-orange-400 shadow-lg shadow-orange-500/30' :
+                      theme === 'Quantum Violet' ? 'border-purple-400 shadow-lg shadow-purple-500/30' :
+                      theme === 'Emerald Pulse' ? 'border-green-400 shadow-lg shadow-green-500/30' :
+                      theme === 'Cosmic Storm' ? 'border-pink-400 shadow-lg shadow-pink-500/30' :
+                      theme === 'Digital Aurora' ? 'border-cyan-400 shadow-lg shadow-cyan-500/30' :
+                      theme === 'Void Walker' ? 'border-gray-400 shadow-lg shadow-gray-500/30' :
+                      theme === 'Glitchcore' ? 'border-fuchsia-400 shadow-lg shadow-fuchsia-500/30' :
+                      'border-violet-400 shadow-lg shadow-violet-500/30'
+                    }`}>
                       👤
                     </div>
                   )}
-                  <input
-                    type="file"
-                    id="avatar-upload"
-                    accept="image/*"
-                    onChange={handleAvatarUpload}
-                    className="hidden"
-                    aria-label="Upload avatar image"
-                  />
-                  <Button 
-                    variant="outline" 
-                    className="mt-2 text-sm"
-                    onClick={() => document.getElementById('avatar-upload')?.click()}
+                  <div className="absolute inset-0 rounded-full bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span className="text-white text-sm font-medium">Change</span>
+                  </div>
+                </div>
+                <input
+                  type="file"
+                  id="avatar-upload"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                  aria-label="Upload avatar image"
+                />
+                <Button 
+                  variant="outline" 
+                  className="px-6 py-2 border-violet-500/50 text-violet-300 hover:bg-violet-500/10 hover:border-violet-400 transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/20"
+                  onClick={() => document.getElementById('avatar-upload')?.click()}
+                >
+                  Upload Avatar
+                </Button>
+                <p className="text-xs text-gray-400">Max 5MB • JPG, PNG, GIF</p>
+              </div>
+
+              {/* Enhanced Badges + Holdings Section */}
+              <div className="bg-gradient-to-br from-neutral-900/50 to-neutral-800/30 p-6 rounded-xl border border-neutral-700/50 backdrop-blur-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-violet-300">Badges + Holdings Display</h3>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowHoldings(!showHoldings)}
+                    className={`text-xs px-3 py-1 transition-all duration-300 ${
+                      showHoldings 
+                        ? 'bg-violet-500/20 border-violet-400 text-violet-300 hover:bg-violet-500/30' 
+                        : 'bg-gray-800/50 border-gray-600 text-gray-400 hover:bg-gray-700/50'
+                    }`}
                   >
-                    Upload Avatar
+                    {showHoldings ? '👁️ Hide' : '💰 Show'} Holdings
                   </Button>
-                  <p className="text-xs text-muted-foreground mt-1">Max 5MB, JPG/PNG</p>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Enhanced Badges Section */}
+                  <div>
+                    <p className="text-sm font-medium text-gray-300 mb-3">Badge Collection</p>
+                    <div className="grid grid-cols-4 gap-3">
+                      <BadgeSelector badges={selectedBadges} toggleBadge={toggleBadge} />
+                    </div>
+                  </div>
+                  
+                  {/* Enhanced Holdings Settings */}
+                  <div className="border-l border-neutral-700/50 pl-6">
+                    <p className="text-sm font-medium text-gray-300 mb-3">Holdings Display Options</p>
+                    <div className="space-y-3">
+                      {[
+                        { key: 'showTotalHoldings', label: 'Total Holdings', icon: '💰', color: 'text-yellow-400' },
+                        { key: 'showStaked', label: 'Staked', icon: '🔒', color: 'text-cyan-400' },
+                        { key: 'showLocked', label: 'Locked', icon: '🔐', color: 'text-green-400' },
+                        { key: 'showPlatformTotal', label: 'Platform Total', icon: '📊', color: 'text-pink-400' },
+                        { key: 'showPortfolioValue', label: 'Portfolio Value', icon: '💎', color: 'text-emerald-400' }
+                      ].map((setting) => (
+                        <label key={setting.key} className="flex items-center gap-3 cursor-pointer group">
+                          <input
+                            type="checkbox"
+                            checked={holdingsSettings[setting.key as keyof typeof holdingsSettings]}
+                            onChange={(e) => setHoldingsSettings(prev => ({
+                              ...prev,
+                              [setting.key]: e.target.checked
+                            }))}
+                            className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-violet-500 focus:ring-violet-500 focus:ring-2 transition-all duration-200"
+                          />
+                          <span className={`text-sm flex items-center gap-2 group-hover:${setting.color} transition-colors duration-200`}>
+                            <span className="text-base">{setting.icon}</span>
+                            {setting.label}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Enhanced Identity Inputs */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-300">Display Name</label>
+                  <Input 
+                    placeholder="Enter your display name" 
+                    value={username} 
+                    onChange={e => setUsername(e.target.value)}
+                    className="bg-neutral-900/50 border-neutral-700 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all duration-300 hover:border-neutral-600"
+                  />
                 </div>
 
-                {/* Badges + Holdings Display Settings */}
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-semibold">Badges + Holdings Display</p>
-                    <Button
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-300">Title</label>
+                  <Select onValueChange={setTitle} defaultValue={title}>
+                    <SelectTrigger className="bg-neutral-900/50 border-neutral-700 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all duration-300 hover:border-neutral-600">
+                      <SelectValue placeholder="Select your title" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {defaultTitles.map((t, idx) => (
+                        <SelectItem key={idx} value={t}>{t}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-300">Vault Theme</label>
+                  <Select onValueChange={setTheme} defaultValue={theme}>
+                    <SelectTrigger className="bg-neutral-900/50 border-neutral-700 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all duration-300 hover:border-neutral-600">
+                      <SelectValue placeholder="Choose your theme" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.keys(eonThemes).map((themeName, idx) => (
+                        <SelectItem key={idx} value={themeName}>{themeName}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-300">Wallet Domain</label>
+                  <div className="flex items-center gap-2">
+                    <Input 
+                      placeholder="your-domain" 
+                      value={domain} 
+                      onChange={(e) => {
+                        setDomain(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''));
+                      }}
+                      className="bg-neutral-900/50 border-neutral-700 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-300 hover:border-neutral-600"
+                    />
+                    <span className="text-sm text-gray-400 font-mono">.sol</span>
+                    <Button 
+                      onClick={claimDomain} 
                       variant="outline"
-                      size="sm"
-                      onClick={() => setShowHoldings(!showHoldings)}
-                      className="text-xs h-6 px-2 bg-gray-800/50 hover:bg-violet-600/20"
+                      disabled={domainStatus !== 'available'}
+                      className="px-4 py-2 border-cyan-500/50 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400 transition-all duration-300 disabled:opacity-50"
                     >
-                      {showHoldings ? '👁️ Hide' : '💰 Show'} Holdings
+                      Claim
                     </Button>
                   </div>
-                  
-                  <div className="bg-neutral-900 p-3 rounded-lg border border-neutral-700">
-                    <div className="flex gap-4">
-                      {/* Badges Section */}
-                      <div className="flex-1">
-                        <p className="text-xs font-semibold text-gray-300 mb-2">Badges</p>
-                        <div className="grid grid-cols-4 gap-2">
-                          <BadgeSelector badges={selectedBadges} toggleBadge={toggleBadge} />
-                        </div>
-                      </div>
-                      
-                      {/* Holdings Settings Section */}
-                      <div className="flex-1 border-l border-neutral-700 pl-4">
-                        <p className="text-xs font-semibold text-gray-300 mb-2">Holdings Display Options</p>
-                        <div className="grid grid-cols-1 gap-2">
-                          {[
-                            { key: 'showTotalHoldings', label: 'Total Holdings', icon: '💰' },
-                            { key: 'showStaked', label: 'Staked', icon: '🔒' },
-                            { key: 'showLocked', label: 'Locked', icon: '🔐' },
-                            { key: 'showPlatformTotal', label: 'Platform Total', icon: '📊' },
-                            { key: 'showPortfolioValue', label: 'Portfolio Value', icon: '💎' }
-                          ].map((setting) => (
-                            <label key={setting.key} className="flex items-center gap-2 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                checked={holdingsSettings[setting.key as keyof typeof holdingsSettings]}
-                                onChange={(e) => setHoldingsSettings(prev => ({
-                                  ...prev,
-                                  [setting.key]: e.target.checked
-                                }))}
-                                className="w-3 h-3 rounded border-gray-600 bg-gray-700 text-violet-500 focus:ring-violet-500 focus:ring-1"
-                              />
-                              <span className="text-xs text-gray-300 flex items-center gap-1">
-                                <span>{setting.icon}</span>
-                                {setting.label}
-                              </span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Selected Badges Display */}
-                  {selectedBadges.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-xs text-gray-400 mb-2">Selected ({selectedBadges.length}):</p>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedBadges.map((badge, idx) => (
-                          <div key={idx} className="flex items-center gap-1 bg-gray-700/30 rounded-lg p-1">
-                            <img src={`/badges/${badge}`} alt={badge} className="w-5 h-5 rounded" />
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => toggleBadge(badge)}
-                              className="text-xs h-5 px-1"
-                            >
-                              ×
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                  {domainStatus === 'available' && (
+                    <p className="text-green-400 text-xs flex items-center gap-1 animate-fade-in">
+                      <span>✓</span> Domain is available for claiming!
+                    </p>
                   )}
                 </div>
               </div>
 
-              {/* Identity Inputs */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <Input 
-                  placeholder="Display Name" 
-                  value={username} 
-                  onChange={e => setUsername(e.target.value)} 
-                />
-
-                <Select onValueChange={setTitle} defaultValue={title}>
-                  <SelectTrigger><SelectValue placeholder="Select Title" /></SelectTrigger>
-                  <SelectContent>
-                    {defaultTitles.map((t, idx) => (
-                      <SelectItem key={idx} value={t}>{t}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select onValueChange={setTheme} defaultValue={theme}>
-                  <SelectTrigger><SelectValue placeholder="Select EON-ID Theme" /></SelectTrigger>
-                  <SelectContent>
-                    {Object.keys(eonThemes).map((themeName, idx) => (
-                      <SelectItem key={idx} value={themeName}>{themeName}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <div className="flex items-center gap-2">
-                  <Input 
-                    placeholder="your-domain" 
-                    value={domain} 
-                    onChange={(e) => {
-                      setDomain(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''));
-                    }} 
-                  />
-                  <Button 
-                    onClick={claimDomain} 
-                    variant="outline"
-                    disabled={domainStatus !== 'available'}
-                    className="whitespace-nowrap"
-                  >
-                    Claim
-                  </Button>
-                </div>
-              </div>
-
-              {domainStatus === 'available' && (
-                <p className="text-green-500 mt-1 text-xs mb-4">✓ Domain is available for claiming!</p>
-              )}
-
-              {/* Bio */}
-              <div className="mb-4">
+              {/* Enhanced Bio Section */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300">Bio</label>
                 <Textarea 
                   value={bio} 
                   onChange={e => setBio(e.target.value)} 
-                  placeholder="Tell us about yourself..." 
+                  placeholder="Tell the vault community about yourself..."
+                  className="bg-neutral-900/50 border-neutral-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-300 hover:border-neutral-600 min-h-[100px] resize-none"
                 />
               </div>
 
-              {/* Socials */}
-              <div className="grid grid-cols-4 gap-2">
-                {socialLinks.map((link, idx) => (
-                  <Button key={idx} variant="outline" className="w-full text-xs">
-                    {link.icon} {link.platform}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right Side – Preview + Pylon Manager */}
-          <div className="space-y-6">
-            {/* EON-ID Preview */}
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl">👤</span>
-                <h2 className="text-2xl font-bold text-blue-300">EON-ID Preview</h2>
-              </div>
-              
-                            {/* Enhanced EON-ID Preview with Compact Layout */}
-              <div className="rounded-xl border border-neutral-700 bg-[#0b0c1a] text-white p-4 shadow-xl">
-                <div className="flex items-start gap-4">
-                  {/* Avatar & Domain */}
-                  <div className="flex flex-col items-center">
-                    <div className="relative">
-                      {avatar ? (
-                        <img
-                          src={avatar}
-                          alt="avatar"
-                          className="w-[90px] h-[90px] rounded-full border-2 border-violet-500 object-cover"
-                        />
-                      ) : (
-                        <div className="w-[90px] h-[90px] rounded-full border-2 border-violet-500 bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center text-2xl">
-                          👤
-                        </div>
-                      )}
-                    </div>
-                    <p className="mt-1 text-sm font-mono text-violet-300">{domain || 'unclaimed'}.sol</p>
+              {/* Enhanced Social Links */}
+              {socialLinks.length > 0 && (
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-gray-300">Connected Socials</label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {socialLinks.map((link, idx) => (
+                      <Button 
+                        key={idx} 
+                        variant="outline" 
+                        className="text-xs py-2 border-neutral-600 hover:border-violet-500 hover:bg-violet-500/10 transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/20"
+                      >
+                        <span className="mr-1">{link.icon}</span>
+                        {link.platform}
+                      </Button>
+                    ))}
                   </div>
+                </div>
+              )}
 
-                  {/* Identity Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-2">
+              {/* Enhanced Embedded Preview */}
+              <div className="bg-gradient-to-br from-gray-900/50 to-gray-800/30 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                    <span className="text-lg">👤</span>
+                  </div>
+                  <h3 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                    Live Preview
+                  </h3>
+                </div>
+                
+                {/* Enhanced Preview Content */}
+                <div className="rounded-xl border border-neutral-700/50 bg-gradient-to-br from-[#0b0c1a] to-[#0d0f1c] text-white p-6 shadow-xl">
+                  <div className="flex items-start gap-6">
+                    {/* Enhanced Avatar & Domain */}
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="relative">
+                        {avatar ? (
+                          <img
+                            src={avatar}
+                            alt="avatar"
+                            className={`w-24 h-24 rounded-full border-3 object-cover transition-all duration-500 ${
+                              theme === 'Nebula Blue' ? 'border-blue-400 shadow-lg shadow-blue-500/40' :
+                              theme === 'Solar Flare' ? 'border-orange-400 shadow-lg shadow-orange-500/40' :
+                              theme === 'Quantum Violet' ? 'border-purple-400 shadow-lg shadow-purple-500/40' :
+                              theme === 'Emerald Pulse' ? 'border-green-400 shadow-lg shadow-green-500/40' :
+                              theme === 'Cosmic Storm' ? 'border-pink-400 shadow-lg shadow-pink-500/40' :
+                              theme === 'Digital Aurora' ? 'border-cyan-400 shadow-lg shadow-cyan-500/40' :
+                              theme === 'Void Walker' ? 'border-gray-400 shadow-lg shadow-gray-500/40' :
+                              theme === 'Glitchcore' ? 'border-fuchsia-400 shadow-lg shadow-fuchsia-500/40' :
+                              'border-violet-400 shadow-lg shadow-violet-500/40'
+                            }`}
+                          />
+                        ) : (
+                          <div className={`w-24 h-24 rounded-full border-3 bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center text-2xl transition-all duration-500 ${
+                            theme === 'Nebula Blue' ? 'border-blue-400 shadow-lg shadow-blue-500/40' :
+                            theme === 'Solar Flare' ? 'border-orange-400 shadow-lg shadow-orange-500/40' :
+                            theme === 'Quantum Violet' ? 'border-purple-400 shadow-lg shadow-purple-500/40' :
+                            theme === 'Emerald Pulse' ? 'border-green-400 shadow-lg shadow-green-500/40' :
+                            theme === 'Cosmic Storm' ? 'border-pink-400 shadow-lg shadow-pink-500/40' :
+                            theme === 'Digital Aurora' ? 'border-cyan-400 shadow-lg shadow-cyan-500/40' :
+                            theme === 'Void Walker' ? 'border-gray-400 shadow-lg shadow-gray-500/40' :
+                            theme === 'Glitchcore' ? 'border-fuchsia-400 shadow-lg shadow-fuchsia-500/40' :
+                            'border-violet-400 shadow-lg shadow-violet-500/40'
+                          }`}>
+                            👤
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-sm font-mono text-violet-300">{domain || 'unclaimed'}.sol</p>
+                    </div>
+
+                    {/* Enhanced Identity Info */}
+                    <div className="flex-1 min-w-0 space-y-4">
                       <div>
                         <h1 className="text-2xl font-bold leading-tight">{username || 'Your Display Name'}</h1>
-                        <h2 className="text-lg text-gray-400 -mt-1">{title || 'Builder'}</h2>
+                        <h2 className="text-lg text-gray-400">{title || 'Builder'}</h2>
                       </div>
-                      
 
-                    </div>
-
-                    {/* XP Progress */}
-                    <div className="mb-3">
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="text-xs uppercase tracking-wide text-gray-400">XP Progress</p>
-                        <p className="text-xs text-gray-300">
-                          {xpLevel} / 1000 XP ({((xpLevel / 1000) * 100).toFixed(1)}%)
-                        </p>
-                      </div>
-                      <div className="w-full bg-neutral-800 h-2 rounded-full overflow-hidden">
-                        <div
-                          className="bg-gradient-to-r from-violet-500 to-blue-500 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${Math.min((xpLevel / 1000) * 100, 100)}%` }}
-                        ></div>
-                      </div>
-                    </div>
-
-                    {/* Bio & Social Links Row */}
-                    <div className="flex items-start gap-4">
-                      {/* Bio Preview */}
-                      {bio && (
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-300 line-clamp-2">{bio}</p>
+                      {/* Enhanced XP Progress */}
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-xs uppercase tracking-wide text-gray-400 font-medium">XP Progress</p>
+                          <p className="text-xs text-gray-300 font-mono">
+                            {xpLevel} / 1000 XP ({((xpLevel / 1000) * 100).toFixed(1)}%)
+                          </p>
                         </div>
-                      )}
+                        <div className="w-full bg-neutral-800 h-3 rounded-full overflow-hidden">
+                          <div
+                            className="bg-gradient-to-r from-violet-500 via-purple-500 to-blue-500 h-3 rounded-full transition-all duration-700 ease-out shadow-lg shadow-violet-500/30"
+                            style={{ width: `${Math.min((xpLevel / 1000) * 100, 100)}%` }}
+                          ></div>
+                        </div>
+                      </div>
 
-                      {/* Social Links Preview */}
-                      {socialLinks.length > 0 && (
-                        <div className="flex items-center gap-1">
-                          {socialLinks.slice(0, 3).map((link, idx) => (
-                            <div key={idx} className="w-5 h-5 text-gray-400 hover:text-white transition-colors">
-                              {link.icon}
+                      {/* Enhanced Bio & Social Links */}
+                      <div className="flex items-start gap-4">
+                        {bio && (
+                          <div className="flex-1">
+                            <p className="text-sm text-gray-300 line-clamp-2 leading-relaxed">{bio}</p>
+                          </div>
+                        )}
+
+                        {socialLinks.length > 0 && (
+                          <div className="flex items-center gap-2">
+                            {socialLinks.slice(0, 3).map((link, idx) => (
+                              <div key={idx} className="w-6 h-6 text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer">
+                                {link.icon}
+                              </div>
+                            ))}
+                            {socialLinks.length > 3 && (
+                              <div className="text-xs text-gray-400 bg-gray-700/50 px-2 py-1 rounded">+{socialLinks.length - 3}</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Enhanced Holdings Panel */}
+                    {showHoldings && (
+                      <div className="w-64 bg-black/40 p-4 rounded-xl text-sm border border-neutral-700/50 backdrop-blur-sm transition-all duration-500">
+                        <div className="space-y-2">
+                          {holdingsSettings.showTotalHoldings && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-400">Total Holdings</span>
+                              <span className="text-yellow-400 font-bold">42,000 EONIC</span>
                             </div>
-                          ))}
-                          {socialLinks.length > 3 && (
-                            <div className="text-xs text-gray-400">+{socialLinks.length - 3}</div>
+                          )}
+                          {holdingsSettings.showStaked && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-400">Staked</span>
+                              <span className="text-cyan-400 font-medium">18,500</span>
+                            </div>
+                          )}
+                          {holdingsSettings.showLocked && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-400">Locked</span>
+                              <span className="text-green-400 font-medium">800,500</span>
+                            </div>
+                          )}
+                          {holdingsSettings.showPlatformTotal && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-400">Platform Total</span>
+                              <span className="text-pink-400 font-medium">54,298.75</span>
+                            </div>
+                          )}
+                          {holdingsSettings.showPortfolioValue && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-400">Portfolio Value</span>
+                              <span className="text-emerald-400 font-medium">
+                                $54,298.75 <span className="text-xs text-emerald-300">(+8.7%)</span>
+                              </span>
+                            </div>
+                          )}
+                          {!Object.values(holdingsSettings).some(Boolean) && (
+                            <div className="text-center text-gray-500 text-xs py-2">
+                              No holdings data selected
+                            </div>
                           )}
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Holdings Panel */}
-                  {showHoldings && (
-                    <div className="w-56 bg-black/30 p-3 rounded-xl text-sm border border-neutral-700 transition-all duration-300">
-                      {holdingsSettings.showTotalHoldings && (
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-400">Total Holdings</span>
-                          <span className="text-yellow-400 font-bold">42,000 EONIC</span>
-                        </div>
-                      )}
-                      {holdingsSettings.showStaked && (
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-400">Staked</span>
-                          <span className="text-cyan-400">18,500</span>
-                        </div>
-                      )}
-                      {holdingsSettings.showLocked && (
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-400">Locked</span>
-                          <span className="text-green-400">800,500</span>
-                        </div>
-                      )}
-                      {holdingsSettings.showPlatformTotal && (
-                        <div className="flex justify-between mb-1">
-                          <span className="text-gray-400">Platform Total</span>
-                          <span className="text-pink-400">54,298.75</span>
-                        </div>
-                      )}
-                      {holdingsSettings.showPortfolioValue && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">Portfolio Value</span>
-                          <span className="text-emerald-400">
-                            $54,298.75 (+8.7%)
-                          </span>
-                        </div>
-                      )}
-                      {!Object.values(holdingsSettings).some(Boolean) && (
-                        <div className="text-center text-gray-500 text-xs">
-                          No holdings data selected
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Bottom Actions Row */}
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-700/50">
-                  {/* Selected Badges Display */}
-                  <div className="flex items-center gap-2">
-                    {selectedBadges && selectedBadges.length > 0 ? (
-                      <>
-                        <span className="text-xs text-gray-400">Badges:</span>
-                        <div className="flex items-center gap-1">
+                  {/* Enhanced Bottom Actions */}
+                  <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-700/50">
+                    <div className="flex items-center gap-2">
+                      {selectedBadges && selectedBadges.length > 0 ? (
+                        <div className="flex items-center gap-2">
                           {selectedBadges.slice(0, 6).map((badge, index) => (
-                            <div key={index} className="relative">
+                            <div key={index} className="relative group">
                               <img
                                 src={`/badges/${badge}`}
                                 alt={badge}
-                                className="w-6 h-6 rounded border border-white/20"
+                                className="w-7 h-7 rounded border border-white/20 transition-all duration-200 group-hover:scale-110 group-hover:border-violet-400"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement;
                                   target.style.display = 'none';
@@ -819,172 +873,235 @@ export default function EonIDProfileSetup() {
                             </div>
                           ))}
                           {selectedBadges.length > 6 && (
-                            <div className="w-6 h-6 rounded bg-gray-700/50 border border-white/20 flex items-center justify-center text-xs text-gray-300">
+                            <div className="w-7 h-7 rounded bg-gray-700/50 border border-white/20 flex items-center justify-center text-xs text-gray-300 font-medium">
                               +{selectedBadges.length - 6}
                             </div>
                           )}
                         </div>
-                      </>
-                    ) : (
-                      <span className="text-xs text-gray-400">No badges selected</span>
-                    )}
+                      ) : (
+                        <span className="text-xs text-gray-500">No badges selected</span>
+                      )}
+                    </div>
+                    
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={async () => {
+                        try {
+                          const referralUrl = `https://archevault.com/ref/${username.toLowerCase() || 'username'}`;
+                          await navigator.clipboard.writeText(referralUrl);
+                          setCopySuccess(true);
+                          setTimeout(() => setCopySuccess(false), 2000);
+                        } catch (err) {
+                          console.error('Failed to copy referral link:', err);
+                        }
+                      }}
+                      className="transition-all duration-300 hover:bg-violet-600/20 hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20"
+                    >
+                      {copySuccess ? '✅ Copied!' : '🔗 Copy Referral'}
+                    </Button>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={async () => {
-                      try {
-                        const referralUrl = `https://archevault.com/ref/${username.toLowerCase() || 'username'}`;
-                        await navigator.clipboard.writeText(referralUrl);
-                        setCopySuccess(true);
-                        setTimeout(() => setCopySuccess(false), 2000);
-                      } catch (err) {
-                        console.error('Failed to copy referral link:', err);
-                      }
-                    }}
-                    className="transition-all duration-200 hover:bg-violet-600/20 hover:border-violet-500"
-                  >
-                    {copySuccess ? '✅ Copied!' : '🔗 Copy Referral'}
-                  </Button>
                 </div>
+              </div>
+
+              {/* Enhanced Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Button 
+                  className={`flex-1 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:shadow-xl hover:shadow-violet-500/25 hover:scale-[1.02] ${
+                    saving ? 'animate-pulse' : ''
+                  }`}
+                  onClick={saveProfile}
+                  disabled={saving || !user}
+                >
+                  {saving ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Saving Profile...
+                    </div>
+                  ) : saveSuccess ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-green-400">✓</span>
+                      Profile Saved!
+                    </div>
+                  ) : (
+                    'Save / Update Profile'
+                  )}
+                </Button>
+                <Button 
+                  className="flex-1 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/25 hover:scale-[1.02]"
+                  onClick={() => {
+                    if (saveSuccess) {
+                      router.push('/dashboard');
+                    } else {
+                      alert('⚠️ Please save your profile first before entering the dashboard.');
+                    }
+                  }}
+                  disabled={!saveSuccess}
+                >
+                  Enter Dashboard
+                </Button>
               </div>
             </div>
+          </div>
 
-            {/* Dashboard Layout Manager */}
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl">⚙️</span>
-                <h2 className="text-2xl font-bold text-purple-300">Dashboard Layout Manager</h2>
+          {/* Right Column: Enhanced Dashboard Layout Manager */}
+          <div className="bg-gradient-to-br from-[#0a0b14] via-[#0c0e1a] to-[#0e1020] border border-neutral-800/60 rounded-2xl p-8 shadow-2xl text-white backdrop-blur-sm">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-lg">
+                <span className="text-xl">⚙️</span>
               </div>
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Dashboard Layout Manager
+              </h2>
+            </div>
 
-              {/* Pylon Manager Header */}
-              <div className="flex items-center justify-between mb-4">
+            <div className="space-y-8">
+              {/* Enhanced Pylon Manager Header */}
+              <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold">Pylon Manager</h3>
-                  <p className="text-sm text-gray-400">{activePylons.length} of {pylons.length} pylons active</p>
+                  <h3 className="text-xl font-bold text-purple-300">Pylon Manager</h3>
+                  <p className="text-sm text-gray-400 mt-1">
+                    {activePylons.length} of {pylons.length} pylons active • Configure your dashboard layout
+                  </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <Button
                     variant={activeView === 'grid' ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setActiveView('grid')}
+                    className="transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20"
                   >
-                    ⊞
+                    ⊞ Grid
                   </Button>
                   <Button
                     variant={activeView === 'list' ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setActiveView('list')}
+                    className="transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20"
                   >
-                    ☰
+                    ☰ List
                   </Button>
-                  <Button variant="outline" size="sm" onClick={resetPylons}>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={resetPylons}
+                    className="border-orange-500/50 text-orange-300 hover:bg-orange-500/10 hover:border-orange-400 transition-all duration-300"
+                  >
                     🔄 Reset
                   </Button>
                 </div>
               </div>
 
-              {/* Category Filters */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                {Object.entries(categoryLabels).map(([category, label]) => (
-                  <Button key={category} variant="outline" size="sm">
-                    {label}
-                  </Button>
-                ))}
+              {/* Enhanced Category Filters */}
+              <div className="bg-gradient-to-br from-neutral-900/50 to-neutral-800/30 p-6 rounded-xl border border-neutral-700/50 backdrop-blur-sm">
+                <h4 className="text-lg font-semibold text-gray-300 mb-4">Filter by Category</h4>
+                <div className="flex flex-wrap gap-3">
+                  {Object.entries(categoryLabels).map(([category, label]) => (
+                    <Button 
+                      key={category} 
+                      variant="outline" 
+                      size="sm"
+                      className="border-neutral-600 hover:border-purple-500 hover:bg-purple-500/10 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20"
+                    >
+                      {label}
+                    </Button>
+                  ))}
+                </div>
               </div>
 
-              {/* Active Pylons Preview */}
-              <div className="grid grid-cols-3 gap-2 mb-6">
-                {activePylons.slice(0, 6).map((pylon) => (
-                  <div key={pylon.id} className="bg-blue-900/30 p-3 rounded-lg text-center">
-                    <div className="text-lg mb-1">{pylon.icon}</div>
-                    <div className="text-xs text-blue-300">{pylon.name}</div>
-                    {pylon.id === 'eonid' && (
-                      <div className="text-xs text-yellow-400 mt-1">CORE</div>
-                    )}
-                    {pylon.enabled && pylon.id !== 'eonid' && (
-                      <div className="text-xs text-green-400 mt-1">Active</div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Pylon List */}
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {pylons.map((pylon) => (
-                  <div 
-                    key={pylon.id}
-                    className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-                      pylon.enabled 
-                        ? 'bg-blue-900/30 border-blue-500/50' 
-                        : 'bg-gray-700/30 border-gray-600'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl">{pylon.icon}</span>
-                      <div>
-                        <div className="font-medium flex items-center gap-2">
-                          {pylon.name}
-                          {pylon.id === 'eonid' && (
-                            <span className="text-xs bg-yellow-600 text-yellow-100 px-2 py-0.5 rounded">
-                              CORE
-                            </span>
-                          )}
+              {/* Enhanced Active Pylons Preview */}
+              <div className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 p-6 rounded-xl border border-blue-700/30 backdrop-blur-sm">
+                <h4 className="text-lg font-semibold text-blue-300 mb-4 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+                  Active Dashboard Preview
+                </h4>
+                <div className="grid grid-cols-3 gap-4">
+                  {activePylons.slice(0, 6).map((pylon) => (
+                    <div 
+                      key={pylon.id} 
+                      className="bg-gradient-to-br from-blue-900/40 to-purple-900/40 p-4 rounded-xl text-center border border-blue-500/30 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20"
+                    >
+                      <div className="text-2xl mb-2">{pylon.icon}</div>
+                      <div className="text-sm text-blue-300 font-medium">{pylon.name}</div>
+                      {pylon.id === 'eonid' && (
+                        <div className="text-xs text-yellow-400 mt-2 bg-yellow-400/20 px-2 py-1 rounded-full">
+                          CORE
                         </div>
-                        <div className="text-xs text-gray-400">{pylon.description}</div>
+                      )}
+                      {pylon.enabled && pylon.id !== 'eonid' && (
+                        <div className="text-xs text-green-400 mt-2 bg-green-400/20 px-2 py-1 rounded-full">
+                          Active
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Enhanced Pylon Configuration List */}
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold text-gray-300">Pylon Configuration</h4>
+                <div className="space-y-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                  {pylons.map((pylon) => (
+                    <div 
+                      key={pylon.id}
+                      className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 hover:scale-[1.02] ${
+                        pylon.enabled 
+                          ? 'bg-gradient-to-r from-blue-900/40 to-purple-900/40 border-blue-500/50 shadow-lg shadow-blue-500/10' 
+                          : 'bg-gradient-to-r from-gray-800/40 to-gray-700/40 border-gray-600/50 hover:border-gray-500'
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-all duration-300 ${
+                          pylon.enabled 
+                            ? 'bg-blue-500/20 border border-blue-400/50' 
+                            : 'bg-gray-700/50 border border-gray-600/50'
+                        }`}>
+                          {pylon.icon}
+                        </div>
+                        <div>
+                          <div className="font-semibold flex items-center gap-3">
+                            {pylon.name}
+                            {pylon.id === 'eonid' && (
+                              <span className="text-xs bg-yellow-600/80 text-yellow-100 px-3 py-1 rounded-full font-medium">
+                                CORE
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-sm text-gray-400 mt-1">{pylon.description}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        {pylon.enabled && (
+                          <span className="text-sm text-green-400 font-medium flex items-center gap-1">
+                            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                            Active
+                          </span>
+                        )}
+                        <button
+                          onClick={() => togglePylon(pylon.id)}
+                          disabled={pylon.id === 'eonid'}
+                          aria-label={`Toggle ${pylon.name} pylon`}
+                          className={`w-12 h-7 rounded-full transition-all duration-300 ${
+                            pylon.enabled 
+                              ? 'bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg shadow-blue-500/30' 
+                              : 'bg-gray-600 hover:bg-gray-500'
+                          } ${pylon.id === 'eonid' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'}`}
+                        >
+                          <div className={`w-5 h-5 bg-white rounded-full transition-all duration-300 shadow-lg ${
+                            pylon.enabled ? 'translate-x-6' : 'translate-x-1'
+                          }`} />
+                        </button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {pylon.enabled && (
-                        <span className="text-xs text-green-400">● Active</span>
-                      )}
-                                             <button
-                         onClick={() => togglePylon(pylon.id)}
-                         disabled={pylon.id === 'eonid'}
-                         aria-label={`Toggle ${pylon.name} pylon`}
-                         className={`w-10 h-6 rounded-full transition-colors ${
-                           pylon.enabled 
-                             ? 'bg-blue-500' 
-                             : 'bg-gray-600'
-                         } ${pylon.id === 'eonid' ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                       >
-                         <div className={`w-4 h-4 bg-white rounded-full transition-transform ${
-                           pylon.enabled ? 'translate-x-5' : 'translate-x-1'
-                         }`} />
-                       </button>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 pt-8 max-w-md mx-auto">
-          <Button 
-            variant="outline" 
-            className="flex-1"
-            onClick={() => router.push('/dashboard')}
-            disabled={saving}
-          >
-            Cancel
-          </Button>
-          <Button 
-            className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={saveProfile}
-            disabled={saving || !user}
-          >
-            {saving ? (
-              <div className="flex items-center gap-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                Saving...
-              </div>
-            ) : (
-              'Save and Enter Vault'
-            )}
-          </Button>
-        </div>
+
         
         {/* Success Message */}
         {saveSuccess && (
