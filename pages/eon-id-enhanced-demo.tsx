@@ -23,9 +23,9 @@ export default function EonIDEnhancedDemo() {
 
   // Badge and Holdings state
   const [activeBadges, setActiveBadges] = useState<string[]>([
-    'badge1.png',
-    'badge2.png',
-    'badge3.png'
+    'badge-dayone.png',
+    'badge-builder.png',
+    'badge-star.png'
   ]);
   const [showFields, setShowFields] = useState<string[]>([
     'total',
@@ -79,7 +79,7 @@ export default function EonIDEnhancedDemo() {
                 {activeBadges.map(badge => (
                   <li key={badge} className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                    {badge.replace('.png', '')}
+                    {badge.replace('.png', '').replace('badge-', '')}
                   </li>
                 ))}
               </ul>
