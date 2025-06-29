@@ -1,8 +1,0 @@
-[
-  {
-    "key": "ctrl+shift+s",
-    "command": "workbench.action.tasks.runTask",
-    "args": "Quick Git Save (Stash)",
-    "when": "!inDebugMode"
-  }
-] 
